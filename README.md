@@ -1,0 +1,2 @@
+# proxmox_ubuntu_cloud_template
+proxmox_ubuntu_cloud_template
