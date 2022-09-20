@@ -1,0 +1,80 @@
+---
+- hosts: "localhost"
+  gather_facts: no
+  tasks:
+  - name: "Load inventory from variables file"
+    include_vars: "{{ playbook_dir }}/../vars.yml"
+
+  - name: Add host from variable file
+    add_host:
+      groups: promox
+      hostname: "{{ proxmox_host }}"
+      ansible_user: "{{ ssh_user }}"
+      ansible_python_interpreter: "/usr/bin/python3"
+
+- hosts: promox
+  become: true
+  pre_tasks:
+  - name: "Load the variables file"
+    include_vars: "{{ playbook_dir }}/../vars.yml"
+
+  tasks:
+  - name: "Set image name variable"
+    set_fact:
+      cloud_image_name: '{{ cloud_image.split("/")[5] }}'
+
+  - name: "Check if '{{ cloud_image_name }}' exists"
+    stat:
+      path: "/root/{{ cloud_image_name }}"
+    register: ubuntu_image
+
+  - name: "Download Ubuntu Cloud Image"
+    ansible.builtin.get_url:
+      url: "{{ cloud_image }}"
+      dest: "/root/{{ cloud_image_name }}"
+    when: not ubuntu_image.stat.exists
+
+  - name: "Check if the vm '{{ vm_id }}' exists"
+    shell: qm list | grep '{{ vm_id }}'
+    register: check_vm_presence
+    ignore_errors: yes
+
+  - name: "Create the base virtual machine"
+    shell: qm create '{{ vm_id }}' --memory '{{ vram }}' --core '{{ vcores }}' --name '{{ vm_name }}' --net0 virtio,bridge=vmbr0
+    when: check_vm_presence.rc != 0
+    register: vm_created
+
+  - name: "Import the downloaded Ubuntu disk to '{{ storage }}' storage"
+    shell: qm importdisk '{{ vm_id }}' '{{ cloud_image_name }}' '{{ storage }}'
+    when: (check_vm_presence.rc != 0) and (vm_created.changed)
+    register: disk_imported
+
+  - name: "Attach the new disk to the VM as scsi drive"
+    shell: qm set '{{ vm_id }}' --scsihw virtio-scsi-pci --scsi0 '{{ storage }}':vm-'{{ vm_id }}'-disk-0
+    when: (vm_created.changed) and (disk_imported.changed)
+    register: disk_attached
+
+  - name: "Add Cloud-Init CD-ROM drive"
+    shell: qm set '{{ vm_id }}' --ide2 '{{ storage }}':cloudinit
+    when: (disk_attached.changed)
+    register: cloud_init_drive_added
+
+  - name: "Make the cloud init drive bootable and restrict BIOS to boot from disk only"
+    shell: qm set '{{ vm_id }}' --boot c --bootdisk scsi0
+    when: cloud_init_drive_added.changed
+
+  - name: "Add serial console"
+    shell: qm set '{{ vm_id }}' --serial0 socket --vga serial0
+
+  - name: "Configure Cloud-Init"
+    shell: "{{ item }}"
+    with_items:
+      - qm set '{{ vm_id }}' --ciuser '{{ cloud_init_user }}'
+      - qm set '{{ vm_id }}' --cipassword '{{ cloud_init_password }}'
+      - qm set '{{ vm_id }}' --nameserver '{{ cloud_init_nameserver }}'
+      - qm set '{{ vm_id }}' --sshkey ~/.ssh/id_rsa.pub
+    no_log: true
+
+  - name: "Create the template."
+    shell: qm template '{{ vm_id }}'
+    when: (check_vm_presence.rc != 0) and (vm_created.changed)
