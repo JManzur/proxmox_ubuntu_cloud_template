@@ -11,7 +11,8 @@ This ansible playbook creates a Proxmox virtual machine template using the Ubunt
 | Proxmox | Python | v3.9.2  |
 
 ## Initialization How-To:
-Located in the root directory, create a file called `vars.yml` with content like the following:
+
+Located in the root directory, create a file called `vars.yml` with a content like the following:
 
 ```yml
 ---
@@ -41,9 +42,9 @@ Located in the root directory, run the `ansible_apply.sh` script:
 ./ansible_apply.sh
 ```
 
-## Create a VM using the template:
+## Create a VM using the template - Proxmox dashboard:
 
-Right click on the template and select "Clone"
+Go to the Proxmox dashboard, right click on the template and select "Clone":
 
 ![App Screenshot](images/proxmox_cloud_image_3.png)
 
@@ -57,9 +58,15 @@ In the new windows select Full Clone, give it a name and click "Clone":
 >
 > Ref.: [VM Templates and Clones](https://pve.proxmox.com/wiki/VM_Templates_and_Clones)
 
-> :bulb: You can also create new clones using the CLI::
+## Create a VM using the template - CLI:
+
+From the proxmox server run the following command:
 
 ```bash
+# Command format:
+qm clone {template_id} {new_vm_id} --name {new_vm_name} --full
+
+# Example:
 qm clone 1000 100 --name testing --full
 ```
 
