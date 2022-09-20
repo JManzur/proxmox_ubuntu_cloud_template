@@ -34,6 +34,14 @@ cloud_init_nameserver: 1.1.1.1,8.8.8.8
 ```
 > :warning: Change the values accordingly  
 
+In the end this should be your folder structure (images folder is excluded):
+
+```bash
+├── ansible_apply.sh
+├── playbooks
+│   └── ubuntu_cloud.yml
+└── vars.yml
+```
 ## Deployment How-To:
 
 Located in the root directory, run the `ansible_apply.sh` script:
