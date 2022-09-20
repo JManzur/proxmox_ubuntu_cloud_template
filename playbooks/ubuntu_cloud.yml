@@ -28,7 +28,7 @@
       path: "/root/{{ cloud_image_name }}"
     register: ubuntu_image
 
-  - name: "Download Ubuntu Cloud Image"
+  - name: "Download the Ubuntu Cloud Image"
     ansible.builtin.get_url:
       url: "{{ cloud_image }}"
       dest: "/root/{{ cloud_image_name }}"

@@ -1,6 +1,6 @@
 # Proxmox Ubuntu Cloud Template:
 
-This ansible playbook creates a Proxmox virtual machine template using the Ubuntu Cloud image, it also leverages [cloud-init](https://cloudinit.readthedocs.io/en/latest/) to do some small configuration on the final image, like setting the user, dns, and ssh key.
+This ansible playbook creates a [Proxmox](https://pve.proxmox.com/wiki/Main_Page) virtual machine template using the [Ubuntu Cloud image](https://cloud-images.ubuntu.com/), it also leverages [cloud-init](https://cloudinit.readthedocs.io/en/latest/) to do some small configuration on the final image, like setting the user, dns, and ssh key.
 
 ## Tested with: 
 
@@ -103,6 +103,8 @@ If you don't want to use this ssh key, create your own key, copy the key to the 
 
 ## Documentation:
 
-- [Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support)
-- [community.general.proxmox_kvm module](https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_kvm_module.html)
+- [Proxmox VM Templates and Clones](https://pve.proxmox.com/wiki/VM_Templates_and_Clones)
+- [Proxmox Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support)
 - [ansible.builtin.get_url module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
+- [ansible.builtin.shell module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html)
+- [Ubuntu Cloud image](https://cloud-images.ubuntu.com/)
