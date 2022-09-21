@@ -60,11 +60,15 @@ In the new windows select Full Clone, give it a name and click "Clone":
 
 ![App Screenshot](images/proxmox_cloud_image_4.png)
 
+> ## Heads up!
+> After cloning and starting the VM, you need to wait for a minute or so, in this time the cloud-init configuration will take place.
+
 > ## Differences between Full Clone vs Linked Clone:
 > - **Full Clone**: A full clone VM is a complete copy and is fully independent from the original VM or VM Template, but it requires the same disk space as the original.
 > - **Linked Clone**: A linked clone VM requires less disk space but cannot run without access to the base VM Template. Linked Clones works for theses storages: files in raw, qcow2, vmdk format (either on local storage or nfs); LVM-thin, ZFS, rbd, sheepdog, nexenta. It's not supported with LVM & ISCSI storage.
 >
 > Ref.: [VM Templates and Clones](https://pve.proxmox.com/wiki/VM_Templates_and_Clones)
+
 
 ## Create a VM using the template - CLI:
 
