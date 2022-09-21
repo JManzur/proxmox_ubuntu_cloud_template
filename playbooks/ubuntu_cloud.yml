@@ -73,6 +73,7 @@
       - qm set '{{ vm_id }}' --cipassword '{{ cloud_init_password }}'
       - qm set '{{ vm_id }}' --nameserver '{{ cloud_init_nameserver }}'
       - qm set '{{ vm_id }}' --sshkey ~/.ssh/id_rsa.pub
+      - qm set '{{ vm_id }}' --ipconfig0 ip=dhcp,ip6=dhcp
     no_log: true
 
   - name: "Create the template."
