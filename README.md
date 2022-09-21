@@ -60,7 +60,7 @@ In the new windows select Full Clone, give it a name and click "Clone":
 
 ![App Screenshot](images/proxmox_cloud_image_4.png)
 
-> ## Heads up!
+> ## :information_source: Heads up!
 > After cloning and starting the VM, you need to wait for a minute or so, in this time the cloud-init configuration will take place.
 
 > ## Differences between Full Clone vs Linked Clone:
