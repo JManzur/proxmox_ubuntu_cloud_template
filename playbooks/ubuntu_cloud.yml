@@ -78,6 +78,9 @@
   - name: "Add serial console"
     ansible.builtin.shell: qm set '{{ vm_id }}' --serial0 socket --vga serial0
 
+  - name: "Enable QEMU Guest Agent"
+    ansible.builtin.shell: qm set '{{ vm_id }}' --agent 1
+
   - name: "Configure Cloud-Init"
     ansible.builtin.shell: "{{ item }}"
     with_items:

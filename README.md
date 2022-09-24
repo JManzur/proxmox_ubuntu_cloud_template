@@ -85,6 +85,7 @@ qm clone 1000 100 --name testing --full
 
 ## Important considerations:
 
+### SSH Key:
 In this playbook I'm setting the cloud-init ssh key to be the same as the one that came with proxmox "out of the box":
 
 ![App Screenshot](images/proxmox_cloud_image.png)
@@ -110,6 +111,21 @@ ssh -i ~/.ssh/my_proxmox_key.pem {user}@{ip}
 
 If you don't want to use this ssh key, create your own key, copy the key to the proxmox server (in the `/root/.ssh/` directory) and make the necessary changes to the playbook tasks.
 
+
+### Qemu-guest-agent
+
+This playbook enables the [qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent) at the host level, but after creating a clone you need to install the agent at the VM level
+
+Install:
+```bash
+sudo apt-get install qemu-guest-agent
+```
+
+Start:
+```bash
+sudo systemctl start qemu-guest-agent
+```
+
 ## Author:
 
 - [@JManzur](https://jmanzur.com)
@@ -118,6 +134,7 @@ If you don't want to use this ssh key, create your own key, copy the key to the 
 
 - [Proxmox VM Templates and Clones](https://pve.proxmox.com/wiki/VM_Templates_and_Clones)
 - [Proxmox Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support)
+- [Proxmox qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent)
 - [ansible.builtin.get_url module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html)
 - [ansible.builtin.shell module](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html)
 - [Ubuntu Cloud image](https://cloud-images.ubuntu.com/)
