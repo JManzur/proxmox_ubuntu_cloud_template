@@ -35,7 +35,7 @@ cloud_init_nameserver: 1.1.1.1,8.8.8.8
 ```
 > :warning: Change the values accordingly  
 
-In the end this should be your folder structure (images folder is excluded):
+Your folder structure should look like this (images folder is excluded):
 
 ```bash
 ├── ansible_apply.sh
@@ -86,15 +86,15 @@ qm clone 1000 100 --name testing --full
 ## Important considerations:
 
 ### SSH Key:
-In this playbook I'm setting the cloud-init ssh key to be the same as the one that came with proxmox "out of the box":
+In this playbook I'm setting the cloud-init ssh-key to be the same as the one that came with proxmox "out of the box":
 
 ![App Screenshot](images/proxmox_cloud_image.png)
 
-To use that ssk-key to connect to the vm you need to copy the private ssh key from the proxmox server to your local machine:
+To use that ssh-key to connect to the VM you need to copy the private ssh key from the proxmox server to your local machine:
 
 ![App Screenshot](images/proxmox_cloud_image_2.png)
 
-My preferred way of doing this is to simply copy the content of the key, and create the file in my local machine as follow:
+My preferred way of doing this is to simply copy the content of the key (in the proxmox host), and create a file in my local machine as follow:
 
 ```bash
 cd ~/.ssh/
@@ -103,7 +103,7 @@ vim my_proxmox_key.pem
 chmod 600 my_proxmox_key.pem
 ```
 
-Now to connect to the server you can do:
+Now to connect to the server you can run:
 ```bash
 ssh -i ~/.ssh/my_proxmox_key.pem {user}@{ip}
 ```
@@ -114,7 +114,7 @@ If you don't want to use this ssh key, create your own key, copy the key to the 
 
 ### Qemu-guest-agent
 
-This playbook enables the [qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent) at the host level, but after creating a clone you need to install the agent at the VM level
+This playbook enables the [qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent) at the host level, but after creating a clone you need to install the agent at the VM level.
 
 Install:
 ```bash
