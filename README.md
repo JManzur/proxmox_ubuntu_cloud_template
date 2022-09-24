@@ -20,8 +20,9 @@ Located in the root directory, create a file called `vars.yml` with a content li
 proxmox_host: 192.168.111.222
 ssh_user: your_proxmox_user
 ssd_storage: true
-# URL to download the Ubuntu Cloud image:
+# URL to download the Ubuntu Cloud image and checksum to validate it:
 cloud_image: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+cloud_image_checksum: 0ab335ed11ed2c607e76dcf5cea36c8affbe036c65096f677f619d0a370a9b64
 # VM details:
 vm_id: 9000
 vm_name: ubuntu-cloud
@@ -80,7 +81,7 @@ From the proxmox server run the following command:
 qm clone {template_id} {new_vm_id} --name {new_vm_name} --full
 
 # Example:
-qm clone 1000 100 --name testing --full
+qm clone 9000 100 --name testing --full
 ```
 
 ## Important considerations:

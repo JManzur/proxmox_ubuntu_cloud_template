@@ -21,19 +21,25 @@
     include_vars: "{{ playbook_dir }}/../vars.yml"
 
   tasks:
-  - name: "Set image name variable"
-    set_fact:
-      cloud_image_name: '{{ cloud_image.split("/")[5] }}'
+  - name: "Set the image name variable"
+    block:
+      - ansible.builtin.set_fact:
+          cloud_image_name: '{{ cloud_image.split("/")[5] }}'
+      - ansible.builtin.set_fact:
+          cloud_image_name: '{{ cloud_image_name.split(".")[0] }}'
+      - ansible.builtin.set_fact:
+          cloud_image_name: "{{ cloud_image_name + '.qcow2' }}" #Needed for SSD emulation
 
   - name: "Check if '{{ cloud_image_name }}' exists"
     stat:
-      path: "/root/{{ cloud_image_name }}"
+      path: "/{{ ssh_user }}/{{ cloud_image_name }}"
     register: ubuntu_image
 
   - name: "Download the Ubuntu Cloud Image"
     ansible.builtin.get_url:
       url: "{{ cloud_image }}"
-      dest: "/root/{{ cloud_image_name }}"
+      dest: "/{{ ssh_user }}/{{ cloud_image_name }}"
+      checksum: sha256:{{ cloud_image_checksum }}
     when: not ubuntu_image.stat.exists
 
   - name: "Check if the vm '{{ vm_id }}' exists"
@@ -53,22 +59,21 @@
 
   - name: "Resize the '{{ cloud_image_name }}' image"
     ansible.builtin.shell: qemu-img resize '{{ cloud_image_name }}' 32G
-    when: (check_vm_presence.rc != 0) and (vm_created.changed)
-    when: disk_imported.changed
+    when: (check_vm_presence.rc != 0) and (disk_imported.changed)
 
-  - name: "Attach the new disk to the VM as scsi drive and set to SSD"
+  - name: "Attach the new disk to the VM as scsi drive and enable SSD emulation"
     ansible.builtin.shell: qm set '{{ vm_id }}' --scsihw virtio-scsi-pci --scsi0 '{{ storage }}':vm-'{{ vm_id }}'-disk-0,discard=on,ssd=1
     when: (vm_created.changed) and (disk_imported.changed) and (ssd_storage|bool == true)
-    register: disk_attached
+    register: disk_attached_ssd
 
-  - name: "Attach the new disk to the VM as scsi drive"
+  - name: "Attach the new disk to the VM as scsi drive (NO SSD emulation)"
     ansible.builtin.shell: qm set '{{ vm_id }}' --scsihw virtio-scsi-pci --scsi0 '{{ storage }}':vm-'{{ vm_id }}'-disk-0
     when: (vm_created.changed) and (disk_imported.changed) and (ssd_storage|bool == false)
     register: disk_attached
 
   - name: "Add Cloud-Init CD-ROM drive"
     ansible.builtin.shell: qm set '{{ vm_id }}' --ide2 '{{ storage }}':cloudinit
-    when: (disk_attached.changed)
+    when: (disk_attached.changed) or (disk_attached_ssd.changed)
     register: cloud_init_drive_added
 
   - name: "Make the cloud init drive bootable and restrict BIOS to boot from disk only"
