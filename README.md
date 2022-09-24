@@ -19,10 +19,11 @@ Located in the root directory, create a file called `vars.yml` with a content li
 # Connection to host proxmox details:
 proxmox_host: 192.168.111.222
 ssh_user: root
+ssd_storage: true
 # URL to download the Ubuntu Cloud image
 cloud_image: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
 # VM details:
-vm_id: 1000
+vm_id: 9000
 vm_name: ubuntu-cloud
 vcores: 2
 vram: 2048
