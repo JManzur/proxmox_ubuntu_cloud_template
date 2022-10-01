@@ -39,7 +39,6 @@
     ansible.builtin.get_url:
       url: "{{ cloud_image }}"
       dest: "/{{ ssh_user }}/{{ cloud_image_name }}"
-      checksum: sha256:{{ cloud_image_checksum }}
     when: not ubuntu_image.stat.exists
 
   - name: "Check if the vm '{{ vm_id }}' exists"
